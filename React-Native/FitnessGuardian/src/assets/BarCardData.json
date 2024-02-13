@@ -1,0 +1,32 @@
+[
+    {
+      "title": "Card 1",
+      "buttonText": "Button 1",
+      "barPercentage": 0.75
+    },
+    {
+      "title": "Card 2",
+      "buttonText": "Button 2",
+      "barPercentage": 0.5
+    },
+    {
+      "title": "Card 3",
+      "buttonText": "Button 3",
+      "barPercentage": 0.25
+    },
+    {
+      "title": "Card 4",
+      "buttonText": "Button 1",
+      "barPercentage": 0.75
+    },
+    {
+      "title": "Card 5",
+      "buttonText": "Button 2",
+      "barPercentage": 0.5
+    },
+    {
+      "title": "Card 6",
+      "buttonText": "Button 3",
+      "barPercentage": 0.25
+    }
+]
