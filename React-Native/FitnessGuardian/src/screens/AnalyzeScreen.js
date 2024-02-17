@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { View, Button, PermissionsAndroid, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Image, PermissionsAndroid } from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
 import VideoCard from '../components/VideoCard';
-import sendMessageToFlaskBackend from '../api/Api';
+import UploadVideo from '../api/Api';
 
-const HomeScreen = () => {
-  const [message, setMessage] = useState('');
+const AnalyzeScreen = () => {
+  const [video, setVideo] = useState([]);
 
   const requestExternalStoragePermission = async () => {
     try {
@@ -33,25 +33,21 @@ const HomeScreen = () => {
     await requestExternalStoragePermission();
 
     try {
-      const result = await DocumentPicker.pickSingle({
+      const videoFile = await DocumentPicker.pickSingle({
         type: [DocumentPicker.types.allFiles],
       });
 
       const videoDetails = {
-        uri: result.uri,
-        type: result.type,
-        name: result.name,
-        size: result.size,
+        uri: videoFile.uri,
+        type: videoFile.type,
+        name: videoFile.name,
+        size: videoFile.size,
       };
 
-      console.log('Analyze screen:', videoDetails);
+      setVideo(videoFile);
 
-      // Send message to backend
-      const message = await sendMessageToFlaskBackend(videoDetails);
+      console.log('Picked Video:', videoDetails);
 
-      console.log('Analyze screen:', message);
-
-      setMessage(videoDetails); // Update message state with the video details
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         console.log('Document picker cancelled');
@@ -61,20 +57,32 @@ const HomeScreen = () => {
     }
   };
 
+  const removeVideo = async () => {
+    setVideo([]);
+  };
+
   return (
     <View style={styles.container}>
+      {video ? <Text style={styles.text}>Name: {video.name}</Text> : null}
 
       <VideoCard
-        pathToVideo={message.uri}
+        pathToVideo={video.uri}
         containerStyle={styles.videoContainer}
       />
 
-      <TouchableOpacity style={styles.button} onPress={pickVideo}>
-        <Text style={styles.buttonText}>Select Video</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.button} onPress={pickVideo}>
+          <Text style={styles.buttonText}>Select Video</Text>
+        </TouchableOpacity>
 
-      {message ? <Text style={styles.text}>{message.name}</Text> : null}
+        <TouchableOpacity style={styles.button} onPress={removeVideo}>
+          <Text style={styles.buttonText}>Remove Video</Text>
+        </TouchableOpacity>
+      </View>
 
+      <View>
+        <UploadVideo videoFile={video}/>
+      </View>
     </View>
   );
 }
@@ -85,26 +93,40 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  buttonContainer: {
+    position:'absolute',
+    top:340,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
   button: {
-    marginTop: 40,
     backgroundColor: 'blue',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
+    flex: 1,
+    marginHorizontal: 5,
   },
   buttonText: {
     color: 'white',
     fontSize: 16,
   },
   text: {
-    marginTop: 0,
+    color:'black',
+    fontWeight: 'bold',
+    position:'absolute',
+    top:10,
+    left:10,
+    marginTop: 20,
+    fontSize: 20,
   },
   videoContainer: {
     position: 'absolute',
-    top: 80,
+    top: 70,
   },
 });
 
-export default HomeScreen;
+export default AnalyzeScreen;
