@@ -50,7 +50,7 @@ class ProfilePage extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 // Handle edit button click
-                print('Edit button clicked');
+                debugPrint('Edit button clicked');
               },
               child: Text('Edit'),
             ),
@@ -58,7 +58,7 @@ class ProfilePage extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 // Handle save button click
-                print('Save button clicked');
+                debugPrint('Save button clicked');
               },
               child: Text('Save'),
             ),
@@ -69,7 +69,7 @@ class ProfilePage extends StatelessWidget {
               trailing: Icon(Icons.arrow_forward_ios),
               onTap: () {
                 // Handle setting 1 click
-                print('Setting 1 clicked');
+                debugPrint('Setting 1 clicked');
               },
             ),
             Divider(height: 4),
@@ -78,7 +78,7 @@ class ProfilePage extends StatelessWidget {
               trailing: Icon(Icons.arrow_forward_ios),
               onTap: () {
                 // Handle setting 2 click
-                print('Setting 2 clicked');
+                debugPrint('Setting 2 clicked');
               },
             ),
             Divider(height: 4),
@@ -87,7 +87,7 @@ class ProfilePage extends StatelessWidget {
               trailing: Icon(Icons.arrow_forward_ios),
               onTap: () {
                 // Handle setting 3 click
-                print('Setting 3 clicked');
+                debugPrint('Setting 3 clicked');
               },
             ),
             Divider(height: 4),
@@ -96,7 +96,7 @@ class ProfilePage extends StatelessWidget {
               trailing: Icon(Icons.arrow_forward_ios),
               onTap: () {
                 // Handle setting 4 click
-                print('Setting 4 clicked');
+                debugPrint('Setting 4 clicked');
               },
             ),
             Divider(height: 4),

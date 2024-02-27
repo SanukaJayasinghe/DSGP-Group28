@@ -15,14 +15,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       title: 'My Fitness App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
+        fontFamily: 'Poppins',
       ),
       home: const MyHomePage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -43,12 +44,17 @@ class _MyHomePageState extends State<MyHomePage> {
     ProfilePage(),
   ];
 
+  // Method to handle bottom navigation bar tap
+  void _onItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
+  // Build method
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('My Fitness App'),
-      // ),
       body: _pages[_currentIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
@@ -59,12 +65,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         child: BottomNavigationBar(
           elevation: 0,
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
           backgroundColor: Colors.transparent,
           selectedItemColor: Colors.red,
           unselectedItemColor: Colors.grey[800],
@@ -86,6 +86,8 @@ class _MyHomePageState extends State<MyHomePage> {
               label: 'Profile',
             ),
           ],
+          currentIndex: _currentIndex,
+          onTap: _onItemTapped,
         ),
       ),
     );
