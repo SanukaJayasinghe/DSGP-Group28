@@ -6,9 +6,6 @@ from src.postureAnalysisModel import PoseDetector
 app = Flask(__name__)
 socketio = SocketIO(app, max_http_buffer_size=100000000)
 
-
-
-
 def save_video(video_name, base64_encoded_video):
     video_data = base64.b64decode(base64_encoded_video)
     file_path = f'videos/{video_name}'
