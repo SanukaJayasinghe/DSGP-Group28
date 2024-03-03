@@ -18,8 +18,16 @@ class _AnalyzeVideoPageState extends State<AnalyzeVideoPage> {
   VideoPlayerController? _controller;
   String? _videoPath;
   String? _videoName;
+  String? _selectedExerciseType;
   late WebSocket _webSocket;
   final List<FeedbackData> _feedbackList = [];
+  final List<String> dropdownItems = [
+    'Pushup',
+    'Situp',
+    'Squat',
+    'Pullup',
+    'Mountain Climbing',
+  ];
 
   @override
   void initState() {
@@ -82,7 +90,7 @@ class _AnalyzeVideoPageState extends State<AnalyzeVideoPage> {
           });
       });
     }
-    _webSocket.sendVideo(File(_videoPath!), _videoName!);
+    _webSocket.sendVideo(File(_videoPath!), _videoName!, _selectedExerciseType);
   }
 
   @override
@@ -95,15 +103,35 @@ class _AnalyzeVideoPageState extends State<AnalyzeVideoPage> {
         children: [
           Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Selected Video: ${_videoName ?? 'None'}',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+              Row(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(16.0,0,4,0),
+                    child: Text(
+                      'Exercise Type:',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                ),
+                  DropdownButton<String>(
+                    value: _selectedExerciseType,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedExerciseType = newValue;
+                      });
+                    },
+                    items: dropdownItems
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    hint: const Text('Select exercise type'),
+                  ),
+                ],
               ),
               if (_videoPath != null &&
                   _controller != null &&
@@ -147,7 +175,7 @@ class _AnalyzeVideoPageState extends State<AnalyzeVideoPage> {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           Text(
             'Mistakes: ${_feedbackList.length}',
             style: const TextStyle(
@@ -155,7 +183,7 @@ class _AnalyzeVideoPageState extends State<AnalyzeVideoPage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           ListBuilder(feedbackList: _feedbackList),
         ],
       ),

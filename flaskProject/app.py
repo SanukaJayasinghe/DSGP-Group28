@@ -1,10 +1,12 @@
 import base64
 from flask import Flask
 from flask_socketio import SocketIO, emit
-from src.connectToModel import PoseDetector
+from src.postureAnalysisModel import PoseDetector
 
 app = Flask(__name__)
 socketio = SocketIO(app, max_http_buffer_size=100000000)
+
+
 
 
 def save_video(video_name, base64_encoded_video):
@@ -15,9 +17,9 @@ def save_video(video_name, base64_encoded_video):
     return file_path
 
 
-def process(file_path):
+def process(file_path,typeOfVideo):
     print('Going to be initialized')
-    pose_detector = PoseDetector()
+    pose_detector = PoseDetector(typeOfVideo)
     pose_detector.process_video(file_path, send_feedback)
 
 
@@ -41,11 +43,12 @@ def handle_send_video(data):
     try:
         video_name = data['name']
         base64_encoded_video = data['file']
+        typeOfVideo = data['type']
 
         # Save the video to a file
         video_file = save_video(video_name, base64_encoded_video)
         print('video saved')
-        process(video_file)
+        process(video_file,typeOfVideo)
 
     except Exception as e:
         print(f'Error handling video upload: {e}')

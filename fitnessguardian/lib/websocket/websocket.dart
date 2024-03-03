@@ -51,7 +51,8 @@ class WebSocket {
     socket.disconnect();
   }
 
-  Future<void> sendVideo(File videoFile, String videoName) async {
+  Future<void> sendVideo(
+      File videoFile, String videoName, String? selectedExerciseType) async {
     try {
       if (!socket.connected) {
         socket.connect();
@@ -70,8 +71,8 @@ class WebSocket {
       socket.emit('sendVideo', {
         'name': videoName,
         'file': base64Video,
+        'type': selectedExerciseType,
       });
-
     } catch (e) {
       print('Error sending video: $e');
       // Handle error gracefully

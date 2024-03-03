@@ -12,6 +12,15 @@ class PoseDetector:
     desired_height = 480
     mp_pose = mp.solutions.pose  # type: ignore
     mp_drawing = mp.solutions.drawing_utils  # type: ignore
+
+    model_path = {
+    'Pushup':'../flaskProject/model/pushup_model.pkl',
+    'Situp':'../flaskProject/model/situp_model.pkl',
+    'Squat':'../flaskProject/model/Squat_model.pkl',
+    'Pullup':'../flaskProject/model/pullup_model.pkl',
+    'Mountain climbing':'../flaskProject/model/mountain_climbing_model.pkl'
+}
+
     pose = mp_pose.Pose(
         min_detection_confidence=0.4,
         min_tracking_confidence=0.4,
@@ -20,12 +29,12 @@ class PoseDetector:
         model_complexity=2
     )
 
-    def __init__(self):
+    def __init__(self,path):
         print('Class initialized')
-        self.model = self.load_model()
+        self.model = self.load_model(self.model_path[path])
 
-    def load_model(self):
-        with open('../flaskProject/model/model.pkl', 'rb') as f:
+    def load_model(self,path):
+        with open(path, 'rb') as f:
             model = pickle.load(f)
         return model
 
