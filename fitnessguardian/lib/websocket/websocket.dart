@@ -1,81 +1,111 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, library_prefixes
 
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:fitnessguardian/models/FeedBackData.dart';
+import 'package:fitnessguardian/models/feedback.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
+/// This class handles WebSocket communication.
 class WebSocket {
   late IO.Socket socket;
   final String url = 'http://localhost:5000';
 
   WebSocket() {
-    socket = IO.io(url, <String, dynamic>{
-      'transports': ['websocket'],
-      'autoConnect': true,
-      'options': <String, dynamic>{
-        'maxHttpBufferSize': 100000000, // 100MB
-      },
-    });
+    _initializeSocket();
   }
 
-  void connect({required Function(dynamic) onMessageReceived}) {
-    socket.on('connect', (_) {
-      print('Connected to WebSocket');
-    });
-
-    socket.on('feedbackdata', (jsonFile) {
-      print('Message received');
-      Map<String, dynamic> data = jsonFile as Map<String, dynamic>;
-      FeedbackData feedback = FeedbackData(
-        image: base64Decode(data['image']),
-        header: data['header'],
-        description: data['description'],
-      );
-      onMessageReceived(feedback);
-    });
-
-    socket.on('disconnect', (_) {
-      print('Disconnected from WebSocket');
-    });
-
-    socket.on('error', (error) {
-      print('Socket error: $error');
-    });
-
+  void _initializeSocket() {
+    socket = IO.io(
+      url,
+      <String, dynamic>{
+        'transports': ['websocket'],
+        'autoConnect': true,
+        'options': <String, dynamic>{
+          'maxHttpBufferSize': 100000000, // 100MB
+        },
+      },
+    );
     socket.connect();
   }
 
-  void close() {
-    socket.disconnect();
-  }
-
   Future<void> sendVideo(
-      File videoFile, String videoName, String? selectedExerciseType) async {
+    File videoFile,
+    String videoName,
+    String? selectedExerciseType,
+    void Function(dynamic message) handleMessageReceived,
+  ) async {
     try {
-      if (!socket.connected) {
-        socket.connect();
-      }
-
-      socket.on('videoStatus', (status) {
-        print('Received status: $status');
-      });
-
-      socket.on('disconnect', (_) {
-        print('WebSocket disconnected');
-      });
-
-      List<int> videoBytes = await videoFile.readAsBytes();
-      String base64Video = base64Encode(videoBytes);
+      _ensureConnected();
+      _setupListeners(handleMessageReceived);
+      final List<int> videoBytes = await videoFile.readAsBytes();
+      final String base64Video = base64Encode(videoBytes);
       socket.emit('sendVideo', {
         'name': videoName,
         'file': base64Video,
         'type': selectedExerciseType,
       });
     } catch (e) {
+      // Handle error appropriately
       print('Error sending video: $e');
-      // Handle error gracefully
     }
+  }
+
+  void _setupListeners(void Function(dynamic message) handleMessageReceived) {
+    socket.on('connect', (_) {
+      // Log connection success
+      print('Connected to WebSocket');
+    });
+
+    socket.on('feedbackdata', (dynamic jsonFile) {
+      // Log message received
+      print('Message received');
+
+      final dynamic data = jsonFile;
+      
+      if (data is Map<String, dynamic>) {
+        final String type = data['type'];
+        final String imageBase64 = data['image'];
+        final String header = data['header'];
+        final String description = data['description'];
+
+        if (type == 'wrong') {
+          final FeedbackData feedback = FeedbackData(
+            imageBytes: base64.decode(imageBase64),
+            header: header,
+            description: description,
+          );
+          handleMessageReceived(feedback);
+        } 
+        else if (type == 'stream') {
+          handleMessageReceived(base64.decode(imageBase64));
+        }
+      }
+    });
+
+    socket.on('error', (error) {
+      // Log socket error
+      print('Socket error: $error');
+    });
+
+    socket.on('videoStatus', (status) {
+      // Log received status
+      print('Received status: $status');
+    });
+
+    socket.on('disconnect', (_) {
+      // Log WebSocket disconnection
+      print('WebSocket disconnected');
+    });
+  }
+
+  void _ensureConnected() {
+    if (!socket.connected) {
+      socket.connect();
+    }
+  }
+
+  void close() {
+    socket.disconnect();
   }
 }

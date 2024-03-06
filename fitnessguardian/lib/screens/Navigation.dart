@@ -1,10 +1,12 @@
-// ignore_for_file: library_private_types_in_public_api, prefer_const_constructors, duplicate_ignore
-import 'package:flutter/material.dart';
-import 'package:fitnessguardian/screens/AnalyzeVideoPage.dart';
-import 'package:fitnessguardian/screens/ExerciseRecommendationPage.dart';
-import 'package:fitnessguardian/screens/DietRecommendationPage.dart';
-import 'package:fitnessguardian/screens/ProfilePage.dart';
+// ignore_for_file: library_private_types_in_public_api
 
+import 'package:flutter/material.dart';
+import 'package:fitnessguardian/screens/analyze_video_page.dart';
+import 'package:fitnessguardian/screens/exercise_recommendation_page.dart';
+import 'package:fitnessguardian/screens/diet_recommendation_page.dart';
+import 'package:fitnessguardian/screens/profile_page.dart';
+
+/// This widget represents the main navigation of the application.
 class Navigation extends StatelessWidget {
   const Navigation({super.key});
 
@@ -34,14 +36,14 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
   final List<Widget> _pages = [
-    AnalyzeVideoPage(),
-    ExerciseRecommendationPage(),
-    DietRecommendationPage(),
-    ProfilePage(),
+    const AnalyzeVideoPage(),
+    const ExerciseRecommendationPage(),
+    const DietRecommendationPage(),
+    const ProfilePage(),
   ];
 
   // Method to handle bottom navigation bar tap
-  void _onItemTapped(int index) {
+  void onItemTapped(int index) {
     setState(() {
       _currentIndex = index;
     });
@@ -53,8 +55,8 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       body: _pages[_currentIndex],
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.blue, 
+        decoration: const BoxDecoration(
+          color: Colors.blue,
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(15.0),
           ),
@@ -70,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
               label: 'Analyze',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.fitness_center),
+              icon: Icon(Icons.exercise),
               label: 'Exercise',
             ),
             BottomNavigationBarItem(
@@ -78,12 +80,12 @@ class _MyHomePageState extends State<MyHomePage> {
               label: 'Diet',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person),
+              icon: Icon(Icons.account_circle),
               label: 'Profile',
             ),
           ],
           currentIndex: _currentIndex,
-          onTap: _onItemTapped,
+          onTap: onItemTapped,
         ),
       ),
     );

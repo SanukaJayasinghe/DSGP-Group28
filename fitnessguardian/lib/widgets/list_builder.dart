@@ -1,16 +1,17 @@
-import 'package:fitnessguardian/models/FeedBackData.dart';
-import 'package:fitnessguardian/screens/ListItemPage.dart';
+import 'package:fitnessguardian/models/feedback.dart';
+import 'package:fitnessguardian/screens/list_item_page.dart';
 import 'package:flutter/material.dart';
 
+/// This widget builds a list of feedback items.
 class ListBuilder extends StatelessWidget {
   final List<FeedbackData> feedbackList;
 
-  const ListBuilder({Key? key, required this.feedbackList}) : super(key: key);
+  const ListBuilder({super.key, required this.feedbackList});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 293,
+      height: 290,
       child: ListView.builder(
         scrollDirection: Axis.vertical,
         itemCount: feedbackList.length,
@@ -31,14 +32,13 @@ class ListBuilder extends StatelessWidget {
                 ),
               ],
             ),
-            // height: 120,
             child: ListTile(
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => ListItemPage(
-                      image: feedback.image,
+                      image: feedback.imageBytes,
                       header: feedback.header,
                       description: feedback.description,
                     ),
@@ -48,7 +48,7 @@ class ListBuilder extends StatelessWidget {
               leading: ClipRRect(
                 borderRadius: BorderRadius.circular(10.0),
                 child: Image.memory(
-                  feedback.image,
+                  feedback.imageBytes,
                   fit: BoxFit.fill,
                 ),
               ),
@@ -71,9 +71,11 @@ class ListBuilder extends StatelessWidget {
       ),
     );
   }
-  String _truncateDescription(String description) {
-    return description.length > 30
-        ? '${description.substring(0, 30)}...'
+
+  /// Truncates the description string if it's longer than the specified [maxLength].
+  String _truncateDescription(String description, {int maxLength = 30}) {
+    return description.length > maxLength
+        ? '${description.substring(0, maxLength)}...'
         : description;
   }
 }

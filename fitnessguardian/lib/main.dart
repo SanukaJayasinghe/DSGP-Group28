@@ -1,10 +1,11 @@
-import 'package:fitnessguardian/screens/LoginPage.dart';
+import 'package:fitnessguardian/screens/login_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
+/// The main application widget.
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

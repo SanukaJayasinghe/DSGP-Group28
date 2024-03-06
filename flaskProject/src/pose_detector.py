@@ -5,43 +5,49 @@ import pandas as pd
 import pickle
 import base64
 import math
+import os
 
 
 class PoseDetector:
-    desired_width = 640
-    desired_height = 480
-    mp_pose = mp.solutions.pose  # type: ignore
-    mp_drawing = mp.solutions.drawing_utils  # type: ignore
-
-    model_path = {
-    'Pushup':'../flaskProject/model/pushup_model.pkl',
-    'Situp':'../flaskProject/model/situp_model.pkl',
-    'Squat':'../flaskProject/model/Squat_model.pkl',
-    'Pullup':'../flaskProject/model/pullup_model.pkl',
-    'Mountain climbing':'../flaskProject/model/mountain_climbing_model.pkl'
-}
-
+    model = ''
+    stream = bool
+    mp_pose = mp.solutions.pose  # type:ignore
+    mp_drawing = mp.solutions.drawing_utils  # type:ignore
     pose = mp_pose.Pose(
         min_detection_confidence=0.4,
         min_tracking_confidence=0.4,
         static_image_mode=False,
         smooth_landmarks=True,
-        model_complexity=2
+        model_complexity=1
     )
+    model_path = {
+        'Pushup': 'pushup_model.pkl',
+        'Situp': 'situp_model.pkl',
+        'Squat': 'squat_model.pkl',
+        'Pullup': 'pullup_model.pkl',
+        'Mountain Climbing': 'mountain_climbing_model.pkl'
+    }
 
-    def __init__(self,path):
+    def __init__(self):
         print('Class initialized')
-        self.model = self.load_model(self.model_path[path])
 
-    def load_model(self,path):
+    def load_model(self, path):
+        path = os.path.join('model', self.model_path[path])
         with open(path, 'rb') as f:
-            model = pickle.load(f)
-        return model
+            self.model = pickle.load(f)
+
+    def stop_stream(self):
+        self.stream = False
+        try:
+            self.cap.release()
+            cv2.destroyAllWindows()
+            print('Cap released')
+        except:
+            print('Cap not released')
 
     def calculate_angle(self, rows):
         row = abs(rows)
 
-        # Accessing columns by their index positions (0 to 5) from the row
         radians = math.atan2(row[5] - row[3], row[4] - row[2]) - \
             math.atan2(row[1] - row[3], row[0] - row[2])
         angle = math.degrees(radians)
@@ -54,23 +60,29 @@ class PoseDetector:
             image, landmarks, self.mp_pose.POSE_CONNECTIONS)
         return image
 
-    def process_video(self, video_path, callback_function):
-        cap = cv2.VideoCapture(video_path)
-        frame_count = 0
+    def resize_image(self, image):
+        min_height = 400
+        height, width = image.shape[:2]
+        aspect_ratio = width / height
+        new_height = max(height // 2, min_height)
+        new_width = int(new_height * aspect_ratio)
+        resized_img = cv2.resize(
+            image, (new_width, new_height), interpolation=cv2.INTER_AREA)
+        return resized_img
 
-        while cap.isOpened():
-            success, image = cap.read()
+    def process_video(self, video_path, callback_function):
+        frame_count = 0
+        self.stream = True
+        self.cap = cv2.VideoCapture(video_path)
+
+        while self.cap.isOpened() and self.stream:
+            success, image = self.cap.read()
             if not success:
                 break
 
             frame_count += 1
             print(f'Processing frame {frame_count}')
 
-            # Resize the frame to the desired width and height
-            image = cv2.resize(
-                image, (self.desired_width, self.desired_height))
-
-            # Convert the image from BGR to RGB
             image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
             results = self.pose.process(image_rgb)
@@ -103,7 +115,7 @@ class PoseDetector:
                         landmarks.landmark[landmark].visibility)
 
                 df = pd.DataFrame(data_dict)
-                Angles_df = pd.DataFrame()
+                angles_df = pd.DataFrame()
 
                 Angle_At_Right_Elbow = df[[
                     'RIGHT_WRIST_Point_x', 'RIGHT_WRIST_Point_y',
@@ -111,7 +123,7 @@ class PoseDetector:
                     'RIGHT_SHOULDER_Point_x', 'RIGHT_SHOULDER_Point_y'
                 ]]
 
-                Angles_df['Angle_At_Right_Elbow'] = Angle_At_Right_Elbow.apply(
+                angles_df['Angle_At_Right_Elbow'] = Angle_At_Right_Elbow.apply(
                     self.calculate_angle, axis=1)
 
                 Angle_At_Left_Elbow = df[[
@@ -119,89 +131,82 @@ class PoseDetector:
                     'LEFT_ELBOW_Point_x', 'LEFT_ELBOW_Point_y',
                     'LEFT_SHOULDER_Point_x', 'LEFT_SHOULDER_Point_y'
                 ]]
-                Angles_df['Angle_At_Left_Elbow'] = Angle_At_Left_Elbow.apply(
+                angles_df['Angle_At_Left_Elbow'] = Angle_At_Left_Elbow.apply(
                     self.calculate_angle, axis=1)
 
-                # Calculate angle at right shoulder
                 Angle_At_Right_Shoulder = df[[
                     'RIGHT_ELBOW_Point_x', 'RIGHT_ELBOW_Point_y',
                     'RIGHT_SHOULDER_Point_x', 'RIGHT_SHOULDER_Point_y',
                     'RIGHT_HIP_Point_x', 'RIGHT_HIP_Point_y'
                 ]]
-                Angles_df['Angle_At_Right_Shoulder'] = Angle_At_Right_Shoulder.apply(
+                angles_df['Angle_At_Right_Shoulder'] = Angle_At_Right_Shoulder.apply(
                     self.calculate_angle, axis=1)
 
-                # Calculate angle at left shoulder
                 Angle_At_Left_Shoulder = df[[
                     'LEFT_ELBOW_Point_x', 'LEFT_ELBOW_Point_y',
                     'LEFT_SHOULDER_Point_x', 'LEFT_SHOULDER_Point_y',
                     'LEFT_HIP_Point_x', 'LEFT_HIP_Point_y'
                 ]]
-                Angles_df['Angle_At_Left_Shoulder'] = Angle_At_Left_Shoulder.apply(
+                angles_df['Angle_At_Left_Shoulder'] = Angle_At_Left_Shoulder.apply(
                     self.calculate_angle, axis=1)
 
-                # Calculate angle at right knee (example)
                 Angle_At_Right_Knee = df[[
                     'RIGHT_HIP_Point_x', 'RIGHT_HIP_Point_y',
                     'RIGHT_KNEE_Point_x', 'RIGHT_KNEE_Point_y',
                     'RIGHT_ANKLE_Point_x', 'RIGHT_ANKLE_Point_y'
                 ]]
-                Angles_df['Angle_At_Right_Knee'] = Angle_At_Right_Knee.apply(
+                angles_df['Angle_At_Right_Knee'] = Angle_At_Right_Knee.apply(
                     self.calculate_angle, axis=1)
 
-                # Calculate angle at left knee (example)
                 Angle_At_Left_Knee = df[[
                     'LEFT_HIP_Point_x', 'LEFT_HIP_Point_y',
                     'LEFT_KNEE_Point_x', 'LEFT_KNEE_Point_y',
                     'LEFT_ANKLE_Point_x', 'LEFT_ANKLE_Point_y'
                 ]]
-                Angles_df['Angle_At_Left_Knee'] = Angle_At_Left_Knee.apply(
+                angles_df['Angle_At_Left_Knee'] = Angle_At_Left_Knee.apply(
                     self.calculate_angle, axis=1)
 
-                # Calculate angle at right hip
                 Angle_At_Right_Hip = df[[
                     'RIGHT_SHOULDER_Point_x', 'RIGHT_SHOULDER_Point_y',
                     'RIGHT_HIP_Point_x', 'RIGHT_HIP_Point_y',
                     'RIGHT_KNEE_Point_x', 'RIGHT_KNEE_Point_y'
                 ]]
-                Angles_df['Angle_At_Right_Hip'] = Angle_At_Right_Hip.apply(
+                angles_df['Angle_At_Right_Hip'] = Angle_At_Right_Hip.apply(
                     self.calculate_angle, axis=1)
 
-                # Calculate angle at left hip
                 Angle_At_Left_Hip = df[[
                     'LEFT_SHOULDER_Point_x', 'LEFT_SHOULDER_Point_y',
                     'LEFT_HIP_Point_x', 'LEFT_HIP_Point_y',
                     'LEFT_KNEE_Point_x', 'LEFT_KNEE_Point_y'
                 ]]
-                Angles_df['Angle_At_Left_Hip'] = Angle_At_Left_Hip.apply(
+                angles_df['Angle_At_Left_Hip'] = Angle_At_Left_Hip.apply(
                     self.calculate_angle, axis=1)
 
-                # Calculate angle at neck (example)
                 Angle_At_Neck = df[[
                     'LEFT_SHOULDER_Point_x', 'LEFT_SHOULDER_Point_y',
                     'NOSE_Point_x', 'NOSE_Point_y',
                     'RIGHT_SHOULDER_Point_x', 'RIGHT_SHOULDER_Point_y'
                 ]]
-                Angles_df['Angle_At_Neck'] = Angle_At_Neck.apply(
+                angles_df['Angle_At_Neck'] = Angle_At_Neck.apply(
                     self.calculate_angle, axis=1)
 
-                prediction = self.model.predict(Angles_df)
+
+                prediction = self.model.predict(angles_df)  # type:ignore
+                image = self.draw_line_and_send(image, landmarks)
+                resized_image = self.resize_image(image)
+                image_bytes = cv2.imencode('.jpeg', resized_image)[1].tobytes()
+                image64bit = base64.b64encode(image_bytes).decode()
 
                 if prediction == 0 or prediction is False:
-                    image = self.draw_line_and_send(image, landmarks)
-                    image_bytes = cv2.imencode('.jpg', image)[1].tobytes()
-                    image64bit = base64.b64encode(image_bytes).decode()
                     callback_function(
-                        {'image': image64bit, 'header': 'Sample header', 'description': 'Sample description'})
+                        {'type': 'wrong', 'image': image64bit, 'header': 'Sample header', 'description': 'Sample description'})
                 else:
-                    # image = self.draw_line_and_send(image, landmarks)
+                    callback_function(
+                        {'type': 'stream', 'image': image64bit, 'header': 'Sample header', 'description': 'Sample description'})
                     pass
-
-            # Display the image
-            # cv2.imshow('MediaPipe Pose', image)
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
-        cap.release()
+        self.cap.release()
         cv2.destroyAllWindows()
