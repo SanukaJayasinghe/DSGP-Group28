@@ -72,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
               label: 'Analyze',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.exercise),
+              icon: Icon(Icons.fitness_center),
               label: 'Exercise',
             ),
             BottomNavigationBarItem(
