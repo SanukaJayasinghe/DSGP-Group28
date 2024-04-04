@@ -13,7 +13,7 @@ class ExerciseClassifier:
 
     def load_random_forest_model(self):
         # Load the model from the pickle file
-        with open("exercise_model.pkl", "rb") as f:
+        with open("flaskProject/model/exercise_model.pkl", "rb") as f:
             self.random_forest_model = pickle.load(f)
             self.training_columns = self.random_forest_model.feature_names_in_.tolist()
 
@@ -22,12 +22,8 @@ class ExerciseClassifier:
             raise ValueError("TF-IDF vectorizer is not initialized. Please train or load the model first.")
         return self.tfidf_vectorizer.transform([text])
 
-    def predict_exercise(self, name, secondary_muscles, instructions, body_part, equipment, target):
-        # Tokenize text data
-        name_tfidf = self.tokenize_text(name)
-        secondary_muscles_tfidf = self.tokenize_text(secondary_muscles)
-        instructions_tfidf = self.tokenize_text(instructions)
-        
+    def predict_exercise(self, body_part, equipment, target):
+        # Tokenize text data - Removed other inputs as they are not needed
         # Create user inputs dictionary
         user_inputs = {
             f'bodyPart_{body_part}': 1,
@@ -39,7 +35,7 @@ class ExerciseClassifier:
         input_df = pd.DataFrame([user_inputs])
 
         # Concatenate tokenized text data with user inputs
-        input_df = pd.concat([input_df, name_tfidf, secondary_muscles_tfidf, instructions_tfidf], axis=1)
+        input_df = pd.concat([input_df], axis=1)
 
         # Reindexing to ensure all required columns are present
         input_df = input_df.reindex(columns=self.training_columns, fill_value=0)
@@ -49,3 +45,19 @@ class ExerciseClassifier:
 
         # Output the predictions
         return predictions[0]
+
+# Instantiate ExerciseClassifier
+exercise_classifier = ExerciseClassifier()
+exercise_classifier.load_random_forest_model()
+
+# User inputs
+print("Please provide the following information:")
+body_part = input("Body Part: ")
+equipment = input("Equipment: ")
+target = input("Target: ")
+
+# Make prediction
+prediction = exercise_classifier.predict_exercise(body_part, equipment, target)
+print("\nPredicted exercise: \n")
+for element in prediction:
+    print(element)
