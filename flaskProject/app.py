@@ -62,3 +62,22 @@ def error_handler(e):
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, host='0.0.0.0', port=5000)
+
+
+model_path = 'DietRecommendation_model.pkl'
+diet_predictor = 'Food_and_Calories.csv'
+
+@socketio.on('send_diet')
+def handle_send_diet(data):
+    # Extract user data from the WebSocket message
+    user_age = data['age']
+    user_weight = data['weight']
+    user_height = data['height']
+    user_gender = data['gender']
+    user_activity_level = data['activity_level']
+
+    # Make prediction
+    predicted_value = predictor.predict_health(user_age, user_weight, user_height, user_gender, user_activity_level)
+
+    # Emit the predicted value back to the client
+    emit('predict_response', {'predicted_value': predicted_value})
