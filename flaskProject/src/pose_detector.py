@@ -29,7 +29,7 @@ class PoseDetector:
     }
 
     def __init__(self):
-        print('Class initialized')
+        print('Pose Detector Class initialized')
 
     def load_model(self, path):
         path = os.path.join('model', self.model_path[path])

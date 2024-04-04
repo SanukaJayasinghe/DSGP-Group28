@@ -6,7 +6,6 @@ import 'dart:io';
 import 'package:fitnessguardian/models/feedback.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-/// This class handles WebSocket communication.
 class WebSocket {
   late IO.Socket socket;
   final String url = 'http://localhost:5000';
@@ -29,15 +28,26 @@ class WebSocket {
     socket.connect();
   }
 
-  Future<void> sendVideo(
+  void sendDiet(Map<String, dynamic> dietData,
+      void Function(dynamic message) dietCallback) {
+    try {
+      _ensureConnected();
+      _setupDietListener(dietCallback);
+      socket.emit('sendDiet', dietData);
+    } catch (e) {
+      print('Error sending diet data: $e');
+    }
+  }
+
+  void sendVideo(
     File videoFile,
     String videoName,
     String? selectedExerciseType,
-    void Function(dynamic message) handleMessageReceived,
+    void Function(dynamic message) videoCallback,
   ) async {
     try {
       _ensureConnected();
-      _setupListeners(handleMessageReceived);
+      _setupVideoListener(videoCallback);
       final List<int> videoBytes = await videoFile.readAsBytes();
       final String base64Video = base64Encode(videoBytes);
       socket.emit('sendVideo', {
@@ -46,23 +56,39 @@ class WebSocket {
         'type': selectedExerciseType,
       });
     } catch (e) {
-      // Handle error appropriately
       print('Error sending video: $e');
     }
   }
 
-  void _setupListeners(void Function(dynamic message) handleMessageReceived) {
-    socket.on('connect', (_) {
-      // Log connection success
-      print('Connected to WebSocket');
-    });
+  void _setupDietListener(void Function(dynamic message) dietCallback) {
+    socket.on('dietRecommendation', (dynamic data) {
+      print('Diet recommendation received');
 
+      final dynamic recommendationData = data;
+
+      if (recommendationData is Map<String, dynamic>) {
+        final String predictedCalorie = recommendationData['predicted_calorie'].toString();
+        final String recommendedIngredients =
+            recommendationData['recommended_ingredients'].toString();
+
+        final Map<String, dynamic> dietInfo = {
+          'predictedCalorie': predictedCalorie,
+          'recommendedIngredients': recommendedIngredients.isNotEmpty
+              ? recommendedIngredients
+              : 'No ingredients available',
+        };
+
+        dietCallback(dietInfo);
+      }
+    });
+  }
+
+  void _setupVideoListener(void Function(dynamic message) videoCallback) {
     socket.on('feedbackdata', (dynamic jsonFile) {
-      // Log message received
-      print('Message received');
+      print('Video feedback received');
 
       final dynamic data = jsonFile;
-      
+
       if (data is Map<String, dynamic>) {
         final String type = data['type'];
         final String imageBase64 = data['image'];
@@ -75,27 +101,11 @@ class WebSocket {
             header: header,
             description: description,
           );
-          handleMessageReceived(feedback);
-        } 
-        else if (type == 'stream') {
-          handleMessageReceived(base64.decode(imageBase64));
+          videoCallback(feedback);
+        } else if (type == 'stream') {
+          videoCallback(base64.decode(imageBase64));
         }
       }
-    });
-
-    socket.on('error', (error) {
-      // Log socket error
-      print('Socket error: $error');
-    });
-
-    socket.on('videoStatus', (status) {
-      // Log received status
-      print('Received status: $status');
-    });
-
-    socket.on('disconnect', (_) {
-      // Log WebSocket disconnection
-      print('WebSocket disconnected');
     });
   }
 

@@ -97,13 +97,14 @@ class _AnalyzeVideoPageState extends State<AnalyzeVideoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
+      appBar: AppBar(
+        title: Text('Posture Analysis'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // const SizedBox(height: 10),
-            // _buildHeadingWidget(),
-            // const SizedBox(height: 10),
             _buildExerciseTypeSelector(),
             const SizedBox(height: 10),
             _buildVideoPlayer(),
@@ -121,70 +122,32 @@ class _AnalyzeVideoPageState extends State<AnalyzeVideoPage> {
     );
   }
 
-  // Widget _buildHeadingWidget() {
-  //   return Container(
-  //     height: 50,
-  //     width: 50,
-  //     padding: const EdgeInsets.all(0),
-  //     alignment: Alignment.center,
-  //     decoration: BoxDecoration(
-  //       color: Colors.white,
-  //       borderRadius: BorderRadius.circular(10), 
-  //       boxShadow: [
-  //         BoxShadow(
-  //           color: Colors.black.withOpacity(0.2),
-  //           spreadRadius: 2,
-  //           blurRadius: 6,
-  //           offset: const Offset(0, 2), 
-  //         ),
-  //       ],
-  //     ),
-  //     child: const Text(
-  //       'Video Analysis', // Heading text
-  //       textAlign: TextAlign.center,
-  //       style: TextStyle(
-  //         fontSize: 24,
-  //         fontWeight: FontWeight.bold,
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  Widget _buildExerciseTypeSelector() {
-    return Row(
-      children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(16.0, 0, 4, 0),
-          child: Text(
-            'Exercise Type:',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        DropdownButton<String>(
-          value: _selectedExerciseType ??= _dropdownItems.first,
-          onChanged: (String? newValue) {
-            setState(() {
-              _selectedExerciseType = newValue;
-            });
-          },
-          items: _dropdownItems.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-          hint: const Text('Select exercise type'),
-        ),
-      ],
-    );
-  }
+Widget _buildExerciseTypeSelector() {
+  return DropdownButtonFormField<String>(
+    decoration: InputDecoration(
+      labelText: 'Exercise Type',
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    ),
+    value: _selectedExerciseType ??= _dropdownItems.first,
+    onChanged: (String? newValue) {
+      setState(() {
+        _selectedExerciseType = newValue;
+      });
+    },
+    items: _dropdownItems.map<DropdownMenuItem<String>>((String value) {
+      return DropdownMenuItem<String>(
+        value: value,
+        child: Text(value),
+      );
+    }).toList(),
+  );
+}
 
   Widget _buildVideoPlayer() {
     return Container(
-      margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
       height: 240,
       width: 360,
       decoration: BoxDecoration(
