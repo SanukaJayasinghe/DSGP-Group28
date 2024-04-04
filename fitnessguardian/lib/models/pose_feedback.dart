@@ -1,11 +1,11 @@
 import 'dart:typed_data';
 
-class FeedbackData {
+class PoseFeedbackData {
   Uint8List imageBytes;
   final String header;
   final String description;
 
-  FeedbackData({
+  PoseFeedbackData({
     required this.imageBytes,
     required this.header,
     required this.description,

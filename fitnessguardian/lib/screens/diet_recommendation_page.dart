@@ -166,7 +166,7 @@ class _DietRecommendationPageState extends State<DietRecommendationPage> {
         return ListTile(
           title: Text('Calorie: $calorie'),
           subtitle: Text(
-              'Ingredients: ${ingredients.join(", ")}'), // Join ingredients with comma
+              'Ingredients: ${ingredients.join(", ")}'),
           onTap: () {
             Navigator.push(
               context,

@@ -3,7 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:fitnessguardian/models/feedback.dart';
+import 'package:fitnessguardian/models/pose_feedback.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class WebSocket {
@@ -84,7 +84,7 @@ class WebSocket {
   }
 
   void _setupVideoListener(void Function(dynamic message) videoCallback) {
-    socket.on('feedbackdata', (dynamic jsonFile) {
+    socket.on('posefeedbackdata', (dynamic jsonFile) {
       print('Video feedback received');
 
       final dynamic data = jsonFile;
@@ -96,12 +96,12 @@ class WebSocket {
         final String description = data['description'];
 
         if (type == 'wrong') {
-          final FeedbackData feedback = FeedbackData(
+          final PoseFeedbackData pose_feedback = PoseFeedbackData(
             imageBytes: base64.decode(imageBase64),
             header: header,
             description: description,
           );
-          videoCallback(feedback);
+          videoCallback(pose_feedback);
         } else if (type == 'stream') {
           videoCallback(base64.decode(imageBase64));
         }

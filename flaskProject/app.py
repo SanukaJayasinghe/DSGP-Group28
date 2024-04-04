@@ -42,7 +42,7 @@ def handle_send_video(data):
 
 def send_feedback(feedback):
     print('Sending feedback')
-    emit('feedbackdata', feedback)
+    emit('posefeedbackdata', feedback)
 
 @socketio.on('sendDiet')
 def handle_send_diet(data):

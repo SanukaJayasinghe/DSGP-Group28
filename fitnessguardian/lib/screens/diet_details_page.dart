@@ -8,7 +8,7 @@ class RecommendationDetailPage extends StatelessWidget {
     Key? key,
     required this.calorie,
     required this.ingredients,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
