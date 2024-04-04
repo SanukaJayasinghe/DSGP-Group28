@@ -59,5 +59,8 @@ target = input("Target: ")
 # Make prediction
 prediction = exercise_classifier.predict_exercise(body_part, equipment, target)
 print("\nPredicted exercise: \n")
-for element in prediction:
-    print(element)
+print("Name:", prediction[0])
+print("Secondary Muscles:", prediction[1])
+print("Predicted Level:", prediction[2])
+print("GIF URL:", prediction[3])
+print("Instructions:", prediction[4])
