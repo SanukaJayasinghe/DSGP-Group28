@@ -9,6 +9,7 @@ class ExerciseRecommendation:
     model_path = os.path.join('model','exercise_recommendation_model.pkl')
 
     def __init__(self):
+        print('Exercise Recommendation Class initialized')
         self.random_forest_model = self.load_random_forest_model()
         self.training_columns = self.random_forest_model.feature_names_in_.tolist() if self.random_forest_model else []
         self.tfidf_vectorizer = None

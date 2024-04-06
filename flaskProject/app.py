@@ -3,7 +3,7 @@ import base64
 from flask import Flask
 from flask_socketio import SocketIO, emit
 from src.diet_recommendation import DietRecommendation
-from src.exersice import ExerciseRecommendation
+from src.exersice_recommendation import ExerciseRecommendation
 from src.pose_detector import PoseDetector
 from src.user_authentication import UserAuthenticator
 

@@ -7,7 +7,7 @@ import 'package:fitnessguardian/screens/diet_recommendation_page.dart';
 import 'package:fitnessguardian/screens/profile_page.dart';
 
 class Navigation extends StatefulWidget {
-  const Navigation({super.key, Key? key});
+  const Navigation({super.key});
 
   @override
   _NavigationState createState() => _NavigationState();
