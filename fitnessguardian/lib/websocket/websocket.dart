@@ -39,6 +39,17 @@ class WebSocket {
     }
   }
 
+  void sendUser(
+      String email, String password, void Function(bool) userCallback) {
+    try {
+      _ensureConnected();
+      _setupUserAuthListener(userCallback);
+      socket.emit('sendUser', {'username': email, 'userpassword': password});
+    } catch (e) {
+      print('Error sending user authentication request: $e');
+    }
+  }
+
   void sendVideo(
     File videoFile,
     String videoName,
@@ -60,6 +71,10 @@ class WebSocket {
     }
   }
 
+  void stopStream(){
+    socket.emit('stopStream', {'status':'stop stream'});
+  }
+  
   void _setupDietListener(void Function(dynamic message) dietCallback) {
     socket.on('dietRecommendation', (dynamic data) {
       print('Diet recommendation received');
@@ -67,7 +82,8 @@ class WebSocket {
       final dynamic recommendationData = data;
 
       if (recommendationData is Map<String, dynamic>) {
-        final String predictedCalorie = recommendationData['predicted_calorie'].toString();
+        final String predictedCalorie =
+            recommendationData['predicted_calorie'].toString();
         final String recommendedIngredients =
             recommendationData['recommended_ingredients'].toString();
 
@@ -96,14 +112,30 @@ class WebSocket {
         final String description = data['description'];
 
         if (type == 'wrong') {
-          final PoseFeedbackData pose_feedback = PoseFeedbackData(
+          final PoseFeedbackData poseFeedback = PoseFeedbackData(
             imageBytes: base64.decode(imageBase64),
             header: header,
             description: description,
           );
-          videoCallback(pose_feedback);
+          videoCallback(poseFeedback);
         } else if (type == 'stream') {
           videoCallback(base64.decode(imageBase64));
+        }
+      }
+    });
+  }
+
+  void _setupUserAuthListener(void Function(bool) userCallback) {
+    socket.on('userAuthentication', (dynamic data) {
+      print('User authentication response received');
+
+      if (data is Map<String, dynamic>) {
+        final String status = data['status'];
+
+        if (status == 'success') {
+          userCallback(true);
+        } else {
+          userCallback(false);
         }
       }
     });

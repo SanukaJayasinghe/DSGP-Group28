@@ -57,6 +57,7 @@ class _AnalyzeVideoPageState extends State<AnalyzeVideoPage> {
 
   void _pickVideo() async {
     _removeVideo();
+    _feedbackList.clear();
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'mp4', 'mov', 'avi'],
@@ -90,7 +91,7 @@ class _AnalyzeVideoPageState extends State<AnalyzeVideoPage> {
       _videoPath = null;
       _videoName = null;
       _videoStream = null;
-      _feedbackList.clear();
+      _webSocket.stopStream();
     });
   }
 

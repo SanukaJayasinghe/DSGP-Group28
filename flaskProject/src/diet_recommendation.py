@@ -42,8 +42,8 @@ class DietRecommendation:
 
     def subset_sum_pandas(self, target_calories):
         data = self.data.copy()
-        subset = data[data['Calories'] <= target_calories].reset_index(drop=True)
-
+        subset = data[data['Calories'] <= target_calories].reset_index(drop=True)# type: ignore
+        
         if subset.empty:
             return None
 

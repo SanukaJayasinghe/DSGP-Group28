@@ -4,11 +4,13 @@ from flask import Flask
 from flask_socketio import SocketIO, emit
 from src.diet_recommendation import DietRecommendation
 from src.pose_detector import PoseDetector
+from src.user_authentication import UserAuthenticator
 
 app = Flask(__name__)
 socketio = SocketIO(app, max_http_buffer_size=100000000)
 pose_detector = PoseDetector()
 diet_recommendation = DietRecommendation()
+user_authentication = UserAuthenticator()
 
 def decode(encoded_data):
     return base64.b64decode(encoded_data)
@@ -39,6 +41,9 @@ def handle_send_video(data):
         print(f'Error handling video upload: {e}')
         emit('videoStatus', {'message': 'Error uploading video'})
 
+@socketio.on('stopStream')
+def handle_stop_stream(data):
+    pose_detector.stop_stream()
 
 def send_feedback(feedback):
     print('Sending feedback')
@@ -70,6 +75,19 @@ def handle_send_diet(data):
         'predicted_calorie': predicted_calorie_str,
         'recommended_ingredients': data_as_string if recommended_ingredients is not None else 'No available combination'
     })
+
+@socketio.on('sendUser')
+def handle_user_auth(data):
+    user_name = data.get('username')
+    user_pass = data.get('userpassword')
+
+    if user_authentication.authenticate_user(user_name, user_pass):
+        print('user active')
+        emit('userAuthentication',{'status':'success'})
+    else:
+        print('non user active')
+        emit('userAuthentication',{'status':'failed'})
+
 
 @socketio.on('connect')
 def handle_connect():

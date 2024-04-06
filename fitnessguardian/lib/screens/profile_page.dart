@@ -3,7 +3,6 @@
 import 'package:fitnessguardian/screens/login_page.dart';
 import 'package:flutter/material.dart';
 
-/// This page displays user profile information.
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
@@ -48,9 +47,10 @@ class ProfilePage extends StatelessWidget {
               SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pushReplacement(
+                  Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                    (route) => false,
                   );
                   debugPrint('Logout button clicked');
                 },

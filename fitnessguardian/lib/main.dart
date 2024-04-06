@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         highlightColor: Colors.transparent,
         fontFamily: 'Poppins',
       ),
-      home: const LoginPage(),
+      home: LoginPage(),
       debugShowCheckedModeBanner: false,
     );
   }
