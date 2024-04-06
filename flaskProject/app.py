@@ -3,12 +3,14 @@ import base64
 from flask import Flask
 from flask_socketio import SocketIO, emit
 from src.diet_recommendation import DietRecommendation
+from src.exersice import ExerciseRecommendation
 from src.pose_detector import PoseDetector
 from src.user_authentication import UserAuthenticator
 
 app = Flask(__name__)
 socketio = SocketIO(app, max_http_buffer_size=100000000)
 pose_detector = PoseDetector()
+exercise_recommendation = ExerciseRecommendation()
 diet_recommendation = DietRecommendation()
 user_authentication = UserAuthenticator()
 
@@ -48,6 +50,27 @@ def handle_stop_stream(data):
 def send_feedback(feedback):
     print('Sending feedback')
     emit('posefeedbackdata', feedback)
+
+@socketio.on('sendExercise')
+def handle_send_exercise(data):
+    print('exercise data recieved')
+    body_part = data.get("bodyPart")
+    equipment = data.get("equipment")
+    target = data.get("target")
+
+    prediction = exercise_recommendation.predict_exercise(body_part, equipment, target)
+
+    if prediction is not None:
+        emit('exerciseRecommendation', {
+            'status':'success',
+            'name': prediction[0],
+            'secondaryMuscles': prediction[1],
+            'predictedLevel': prediction[2],
+            'instructions': prediction[4]
+        })
+    else:
+        emit('exerciseRecommendation', { 'status':'failed'})
+
 
 @socketio.on('sendDiet')
 def handle_send_diet(data):

@@ -3,23 +3,24 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-import pickle
+import pickle, os
 
-class ExerciseClassifier:
+class ExerciseRecommendation:
+    model_path = os.path.join('model','exercise_recommendation_model.pkl')
+
     def __init__(self):
-        self.random_forest_model = None
-        self.training_columns = None
+        self.random_forest_model = self.load_random_forest_model()
+        self.training_columns = self.random_forest_model.feature_names_in_.tolist() if self.random_forest_model else []
         self.tfidf_vectorizer = None
 
     def load_random_forest_model(self):
         # Load the model from the pickle file
-        with open("flaskProject/model/exercise_model.pkl", "rb") as f:
-            self.random_forest_model = pickle.load(f)
-            self.training_columns = self.random_forest_model.feature_names_in_.tolist()
+        with open(self.model_path, "rb") as f:
+            return pickle.load(f)
 
     def tokenize_text(self, text):
         if self.tfidf_vectorizer is None:
-            raise ValueError("TF-IDF vectorizer is not initialized. Please train or load the model first.")
+            raise ValueError("TF-IDF vectorizer is not initialized.")
         return self.tfidf_vectorizer.transform([text])
 
     def predict_exercise(self, body_part, equipment, target):
@@ -41,26 +42,7 @@ class ExerciseClassifier:
         input_df = input_df.reindex(columns=self.training_columns, fill_value=0)
 
         # Make predictions
-        predictions = self.random_forest_model.predict(input_df)
+        predictions = self.random_forest_model.predict(input_df) #type:ignore
 
         # Output the predictions
         return predictions[0]
-
-# Instantiate ExerciseClassifier
-exercise_classifier = ExerciseClassifier()
-exercise_classifier.load_random_forest_model()
-
-# User inputs
-print("Please provide the following information:")
-body_part = input("Body Part: ")
-equipment = input("Equipment: ")
-target = input("Target: ")
-
-# Make prediction
-prediction = exercise_classifier.predict_exercise(body_part, equipment, target)
-print("\nPredicted exercise: \n")
-print("Name:", prediction[0])
-print("Secondary Muscles:", prediction[1])
-print("Predicted Level:", prediction[2])
-print("GIF URL:", prediction[3])
-print("Instructions:", prediction[4])

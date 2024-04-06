@@ -74,6 +74,24 @@ class WebSocket {
   void stopStream(){
     socket.emit('stopStream', {'status':'stop stream'});
   }
+
+  void sendExercise(Map<String, dynamic> exerciseData,
+      void Function(dynamic message) exerciseCallback){
+      try {
+      _ensureConnected();
+      _setupExerciseListener(exerciseCallback);
+      socket.emit('sendExercise', exerciseData);
+    } catch (e) {
+      print('Error sending exercise data: $e');
+    }
+  }
+
+  void _setupExerciseListener(void Function(dynamic message) exerciseCallback){
+    socket.on('exerciseRecommendation', (dynamic data) {
+      print('exercise recommendation received');
+      exerciseCallback(data);
+    });
+  }
   
   void _setupDietListener(void Function(dynamic message) dietCallback) {
     socket.on('dietRecommendation', (dynamic data) {

@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_print, library_private_types_in_public_api
 
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:fitnessguardian/screens/pose_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -105,7 +104,7 @@ class _AnalyzeVideoPageState extends State<AnalyzeVideoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Posture Analysis'),
+        title: const Text('Posture Analysis'),
       ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class RecommendationDetailPage extends StatelessWidget {
+class DietRecommendationDetailPage extends StatelessWidget {
   final String calorie;
   final String ingredients;
 
-  const RecommendationDetailPage({
+  const DietRecommendationDetailPage({
     Key? key,
     required this.calorie,
     required this.ingredients,

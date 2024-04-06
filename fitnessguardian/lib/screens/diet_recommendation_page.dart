@@ -165,13 +165,12 @@ class _DietRecommendationPageState extends State<DietRecommendationPage> {
 
         return ListTile(
           title: Text('Calorie: $calorie'),
-          subtitle: Text(
-              'Ingredients: ${ingredients.join(", ")}'),
+          subtitle: Text('Ingredients: ${ingredients.join(", ")}'),
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => RecommendationDetailPage(
+                builder: (context) => DietRecommendationDetailPage(
                   calorie: calorie,
                   ingredients: ingredients.join("\n"),
                 ),

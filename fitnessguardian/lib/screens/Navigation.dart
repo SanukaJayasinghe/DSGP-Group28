@@ -1,6 +1,5 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:fitnessguardian/screens/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fitnessguardian/screens/analyze_video_page.dart';
 import 'package:fitnessguardian/screens/exercise_recommendation_page.dart';
@@ -8,7 +7,7 @@ import 'package:fitnessguardian/screens/diet_recommendation_page.dart';
 import 'package:fitnessguardian/screens/profile_page.dart';
 
 class Navigation extends StatefulWidget {
-  const Navigation({Key? key});
+  const Navigation({super.key, Key? key});
 
   @override
   _NavigationState createState() => _NavigationState();
