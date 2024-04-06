@@ -56,7 +56,11 @@ class _AnalyzeVideoPageState extends State<AnalyzeVideoPage> {
 
   void _pickVideo() async {
     _removeVideo();
-    _feedbackList.clear();
+
+    setState(() {
+      _feedbackList.clear();
+    });
+
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'mp4', 'mov', 'avi'],
