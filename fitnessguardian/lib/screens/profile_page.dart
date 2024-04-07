@@ -3,6 +3,7 @@
 import 'package:fitnessguardian/screens/login_page.dart';
 import 'package:flutter/material.dart';
 
+// profile page
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 

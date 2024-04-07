@@ -6,6 +6,7 @@ import 'package:fitnessguardian/screens/exercise_recommendation_page.dart';
 import 'package:fitnessguardian/screens/diet_recommendation_page.dart';
 import 'package:fitnessguardian/screens/profile_page.dart';
 
+// navigation
 class Navigation extends StatefulWidget {
   const Navigation({super.key});
 
@@ -14,6 +15,7 @@ class Navigation extends StatefulWidget {
 }
 
 class _NavigationState extends State<Navigation> {
+  // add pages for bottom tab navigation
   int _currentIndex = 0;
   final List<Widget> _pages = const [
     AnalyzeVideoPage(),
@@ -21,7 +23,7 @@ class _NavigationState extends State<Navigation> {
     DietRecommendationPage(),
     ProfilePage(),
   ];
-
+  // change page on tap
   void onItemTapped(int index) {
     setState(() {
       _currentIndex = index;

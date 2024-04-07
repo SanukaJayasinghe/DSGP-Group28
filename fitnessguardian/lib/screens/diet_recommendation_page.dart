@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fitnessguardian/screens/diet_details_page.dart';
 import 'package:fitnessguardian/websocket/websocket.dart';
 
+// page for diet recommendation
 class DietRecommendationPage extends StatefulWidget {
   const DietRecommendationPage({Key? key}) : super(key: key);
 
@@ -10,6 +11,7 @@ class DietRecommendationPage extends StatefulWidget {
 }
 
 class _DietRecommendationPageState extends State<DietRecommendationPage> {
+  // variables
   String? selectedAgeValue;
   String? selectedWeightValue;
   String? selectedHeightValue;
@@ -45,6 +47,7 @@ class _DietRecommendationPageState extends State<DietRecommendationPage> {
     _webSocket = WebSocket();
   }
 
+  // function to update UI based on the feedback recieved
   void _handleMessageReceived(dynamic message) {
     setState(() {
       final String? predictedCalorie = message['predictedCalorie'] ?? '';
@@ -71,6 +74,7 @@ class _DietRecommendationPageState extends State<DietRecommendationPage> {
     });
   }
 
+  // send selected user data to backend using websocket
   void _sendDietData() {
     _webSocket.sendDiet({
       'age': selectedAgeValue,
@@ -83,6 +87,7 @@ class _DietRecommendationPageState extends State<DietRecommendationPage> {
     print('Sending diet data to backend');
   }
 
+  // widget builder
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -133,6 +138,7 @@ class _DietRecommendationPageState extends State<DietRecommendationPage> {
     );
   }
 
+  // widget for building dropdown choice boxes
   Widget _buildDropdown(String labelText, String? selectedValue,
       List<String> items, void Function(String?) onChanged) {
     return DropdownButtonFormField<String>(
@@ -154,6 +160,7 @@ class _DietRecommendationPageState extends State<DietRecommendationPage> {
     );
   }
 
+  // widget to show recommended diet 
   Widget _buildRecommendedDietList() {
     return ListView.builder(
       shrinkWrap: true,

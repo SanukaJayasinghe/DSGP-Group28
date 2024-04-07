@@ -2,12 +2,14 @@ import sqlite3
 import os
 
 class UserAuthenticator:
+    #  defin database path
     path = os.path.join("database","user_credentials.db")
 
     def __init__(self):
         print("User Authentication Class initialized")
         self.db_file = self.path
 
+    # check for existing user
     def authenticate_user(self, username, password):
         try:
             with sqlite3.connect(self.db_file) as conn:

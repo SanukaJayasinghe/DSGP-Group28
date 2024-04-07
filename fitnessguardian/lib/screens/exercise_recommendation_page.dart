@@ -2,6 +2,7 @@ import 'package:fitnessguardian/screens/exercise_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fitnessguardian/websocket/websocket.dart';
 
+// page for exercise recommendation
 class ExerciseRecommendationPage extends StatefulWidget {
   const ExerciseRecommendationPage({Key? key}) : super(key: key);
 
@@ -10,50 +11,49 @@ class ExerciseRecommendationPage extends StatefulWidget {
       _ExerciseRecommendationPageState();
 }
 
-class _ExerciseRecommendationPageState
-    extends State<ExerciseRecommendationPage> {
+class _ExerciseRecommendationPageState extends State<ExerciseRecommendationPage> {
+  //define variables
   String? selectedBodyPart;
   String? selectedEquipment;
   String? selectedTarget;
 
-final List<String> bodyParts = [
-  'waist',
-  'upper legs',
-  'back',
-  'lower legs',
-  'chest',
-  'upper arms',
-  'cardio',
-  'shoulders',
-  'lower arms',
-  'neck',
-];
-final List<String> equipments = [
-  'body weight',
-  'cable',
-  'leverage machine',
-  'assisted',
-  'medicine ball',
-  'stability ball',
-  'band',
-  'barbell',
-  'rope',
-  'dumbbell',
-];
+  final List<String> bodyParts = [
+    'waist',
+    'upper legs',
+    'back',
+    'lower legs',
+    'chest',
+    'upper arms',
+    'cardio',
+    'shoulders',
+    'lower arms',
+    'neck',
+  ];
+  final List<String> equipments = [
+    'body weight',
+    'cable',
+    'leverage machine',
+    'assisted',
+    'medicine ball',
+    'stability ball',
+    'band',
+    'barbell',
+    'rope',
+    'dumbbell',
+  ];
 
   final List<String> targets = [
-  'abs',
-  'quads',
-  'lats',
-  'calves',
-  'pectorals',
-  'glutes',
-  'hamstrings',
-  'adductors',
-  'triceps',
-  'cardiovascular system',
-];
-
+    'abs',
+    'quads',
+    'lats',
+    'calves',
+    'pectorals',
+    'glutes',
+    'hamstrings',
+    'adductors',
+    'triceps',
+    'cardiovascular system',
+  ];
 
   late WebSocket _webSocket;
 
@@ -65,6 +65,7 @@ final List<String> equipments = [
     _webSocket = WebSocket();
   }
 
+  // function to update UI based on the feedback recieved
   void _handleMessageReceived(dynamic message) {
     setState(() {
       final String? name = message['name'] ?? '';
@@ -87,7 +88,7 @@ final List<String> equipments = [
       print('Instructions: $instructions');
     });
   }
-
+  // send selected user data to backend using websocket
   void _sendExerciseData() {
     if (selectedBodyPart == null ||
         selectedEquipment == null ||
@@ -104,6 +105,7 @@ final List<String> equipments = [
     print('Sending exercise data to backend');
   }
 
+  // widget builder
   @override
   Widget build(BuildContext context) {
     return Scaffold(

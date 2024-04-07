@@ -10,6 +10,7 @@ from datetime import timedelta
 
 
 class PoseDetector:
+    # define variables
     model = ''
     stream = bool
     mp_pose = mp.solutions.pose  # type:ignore
@@ -21,6 +22,7 @@ class PoseDetector:
         smooth_landmarks=True,
         model_complexity=1
     )
+    # define model paths
     model_path = {
         'Pushup': 'pushup_model.pkl',
         'Situp': 'situp_model.pkl',
@@ -32,11 +34,13 @@ class PoseDetector:
     def __init__(self):
         print('Pose Detector Class initialized')
 
+    # load model
     def load_model(self, path):
         path = os.path.join('model', self.model_path[path])
         with open(path, 'rb') as f:
             self.model = pickle.load(f)
 
+    # stop video processing
     def stop_stream(self):
         self.stream = False
         try:
@@ -46,6 +50,7 @@ class PoseDetector:
         except:
             print('Cap not released')
 
+    # function to calculate angles from keypoints
     def calculate_angle(self, rows):
         row = abs(rows)
 
@@ -56,6 +61,7 @@ class PoseDetector:
             angle += 360
         return angle
 
+    # draw prediction and keypoints on feedback video frame 
     def draw_line_and_send(self, image, landmarks, prediction):
         self.mp_drawing.draw_landmarks(
             image, landmarks, self.mp_pose.POSE_CONNECTIONS)
@@ -69,6 +75,7 @@ class PoseDetector:
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
         return image
 
+    # resize image
     def resize_image(self, image):
         min_height = 400
         height, width = image.shape[:2]
@@ -79,6 +86,7 @@ class PoseDetector:
             image, (new_width, new_height), interpolation=cv2.INTER_AREA)
         return resized_img
 
+    # process video
     def process_video(self, video_path, callback_function):
         self.stream = True
         self.cap = cv2.VideoCapture(video_path)

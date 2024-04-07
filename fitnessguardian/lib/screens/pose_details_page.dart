@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
+// page for pose feedback information
 class ListItemPage extends StatelessWidget {
   final Uint8List image;
   final String header;

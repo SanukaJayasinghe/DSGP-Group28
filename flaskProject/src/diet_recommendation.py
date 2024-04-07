@@ -4,6 +4,7 @@ import random
 import os
 
 class DietRecommendation:
+    # define dataset, model paths
     model_path = "diet_recommendation_model.pkl"
     dataset_path = "food_ingredient.csv"
 
@@ -14,16 +15,19 @@ class DietRecommendation:
         self.model = self.load_model()
         self.data = self.read_data_from_csv()
 
+    # load model
     def load_model(self):
         path = os.path.join('model', self.model_path)
         with open(path, 'rb') as f:
             model = pickle.load(f)
         return model
 
+    # read food ingredients data  
     def read_data_from_csv(self):
         path = os.path.join('database', self.dataset_path)
         return pd.read_csv(path)
 
+    #  calorie prediction
     def predict_calorie(self, user_age, user_weight, user_height, user_gender, user_activity_level):
         BMI = user_weight / (user_height ** 2)
         user_gender = 1 if user_gender == "M" else 0
@@ -33,6 +37,7 @@ class DietRecommendation:
 
         return int(user_pred[0])
 
+    # create food ingredient colllection
     def fetch_ingredients(self, target_calories):
         result = self.subset_sum_pandas(target_calories)
         if result is not None:

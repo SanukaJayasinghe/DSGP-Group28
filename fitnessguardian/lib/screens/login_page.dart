@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fitnessguardian/websocket/websocket.dart';
 import 'package:fitnessguardian/screens/navigation.dart';
 
+// login page
 class LoginPage extends StatelessWidget {
   final WebSocket _webSocket = WebSocket();
   final TextEditingController _usernameController = TextEditingController();
@@ -9,7 +10,9 @@ class LoginPage extends StatelessWidget {
 
   LoginPage({super.key});
 
+  // validating user credentials and routing to navigation page
   void validateCredentials(BuildContext context, String email, String password) {
+    // sending user details to backend via websocket for valiadation
     _webSocket.sendUser(email, password, (bool isAuthenticated) {
       if (isAuthenticated) {
         Navigator.push(
@@ -17,6 +20,7 @@ class LoginPage extends StatelessWidget {
           MaterialPageRoute(builder: (context) => const Navigation()),
         );
       } else {
+        // dialog box to show if the credentials are wrong
         showDialog(
           context: context,
           builder: (BuildContext context) {

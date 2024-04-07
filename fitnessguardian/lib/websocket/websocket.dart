@@ -8,13 +8,14 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class WebSocket {
   late IO.Socket socket;
-  final String url = 'http://localhost:5000';
+  final String url = 'http://localhost:5000'; // Server URL
 
   WebSocket() {
     _initializeSocket();
   }
 
   void _initializeSocket() {
+    // credentials to connect to backend
     socket = IO.io(
       url,
       <String, dynamic>{
@@ -28,6 +29,7 @@ class WebSocket {
     socket.connect();
   }
 
+  // send user diet preference to backend
   void sendDiet(Map<String, dynamic> dietData,
       void Function(dynamic message) dietCallback) {
     try {
@@ -39,6 +41,7 @@ class WebSocket {
     }
   }
 
+  // send user login credentials to backend
   void sendUser(
       String email, String password, void Function(bool) userCallback) {
     try {
@@ -50,6 +53,7 @@ class WebSocket {
     }
   }
 
+  // send user exercise video to backend
   void sendVideo(
     File videoFile,
     String videoName,
@@ -71,10 +75,12 @@ class WebSocket {
     }
   }
 
+  // informing backend to stop video process
   void stopStream(){
     socket.emit('stopStream', {'status':'stop stream'});
   }
 
+  // send user exercise preference to backend
   void sendExercise(Map<String, dynamic> exerciseData,
       void Function(dynamic message) exerciseCallback){
       try {
@@ -86,6 +92,7 @@ class WebSocket {
     }
   }
 
+  // recieve exercise recommendation
   void _setupExerciseListener(void Function(dynamic message) exerciseCallback){
     socket.on('exerciseRecommendation', (dynamic data) {
       print('exercise recommendation received');
@@ -93,6 +100,7 @@ class WebSocket {
     });
   }
   
+  // recieve diet recommendation
   void _setupDietListener(void Function(dynamic message) dietCallback) {
     socket.on('dietRecommendation', (dynamic data) {
       print('Diet recommendation received');
@@ -117,6 +125,7 @@ class WebSocket {
     });
   }
 
+  // recieve posture analysis
   void _setupVideoListener(void Function(dynamic message) videoCallback) {
     socket.on('posefeedbackdata', (dynamic jsonFile) {
       print('Video feedback received');
@@ -143,6 +152,7 @@ class WebSocket {
     });
   }
 
+  // recieve user authentication status
   void _setupUserAuthListener(void Function(bool) userCallback) {
     socket.on('userAuthentication', (dynamic data) {
       print('User authentication response received');
@@ -159,12 +169,14 @@ class WebSocket {
     });
   }
 
+  // ensure websocket is connected
   void _ensureConnected() {
     if (!socket.connected) {
       socket.connect();
     }
   }
 
+  // end websocket connection
   void close() {
     socket.disconnect();
   }

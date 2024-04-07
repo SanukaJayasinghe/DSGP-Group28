@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// page for recommended diet information
 class DietRecommendationDetailPage extends StatelessWidget {
   final String calorie;
   final String ingredients;

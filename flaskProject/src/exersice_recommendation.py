@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 import pickle, os
 
 class ExerciseRecommendation:
+    # define model path
     model_path = os.path.join('model','exercise_recommendation_model.pkl')
 
     def __init__(self):

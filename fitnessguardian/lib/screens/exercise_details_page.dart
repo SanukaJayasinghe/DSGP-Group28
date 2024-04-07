@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// page for recommended exercise information
 class ExerciseRecommendationDetailPage extends StatelessWidget {
   final String name;
   final String secondaryMuscles;

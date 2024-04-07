@@ -9,6 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:fitnessguardian/websocket/websocket.dart';
 import 'package:fitnessguardian/models/pose_feedback.dart';
 
+// analyze video page
 class AnalyzeVideoPage extends StatefulWidget {
   const AnalyzeVideoPage({super.key});
 
@@ -17,6 +18,7 @@ class AnalyzeVideoPage extends StatefulWidget {
 }
 
 class _AnalyzeVideoPageState extends State<AnalyzeVideoPage> {
+  // variables
   String? _videoPath;
   String? _videoName;
   String? _selectedExerciseType;
@@ -45,6 +47,7 @@ class _AnalyzeVideoPageState extends State<AnalyzeVideoPage> {
     super.dispose();
   }
 
+  // requesting storage permission for video selection
   void _requestPermissions() async {
     final status = await Permission.mediaLibrary.request();
     if (status.isGranted) {
@@ -54,6 +57,7 @@ class _AnalyzeVideoPageState extends State<AnalyzeVideoPage> {
     }
   }
 
+  // function for picking video
   void _pickVideo() async {
     _removeVideo();
 
@@ -79,6 +83,7 @@ class _AnalyzeVideoPageState extends State<AnalyzeVideoPage> {
     );
   }
 
+  // call back function for updating UI based on feedback
   void _handleMessageReceived(dynamic message) {
     setState(() {
       if (message is PoseFeedbackData) {
@@ -89,6 +94,7 @@ class _AnalyzeVideoPageState extends State<AnalyzeVideoPage> {
     });
   }
 
+  // removing video from UI
   void _removeVideo() {
     setState(() {
       _videoPath = null;
@@ -98,12 +104,14 @@ class _AnalyzeVideoPageState extends State<AnalyzeVideoPage> {
     });
   }
 
+  // turncating description 
   String _truncateDescription(String description, {int maxLength = 30}) {
     return description.length > maxLength
         ? '${description.substring(0, maxLength)}...'
         : description;
   }
 
+  // widget builder
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,6 +140,7 @@ class _AnalyzeVideoPageState extends State<AnalyzeVideoPage> {
     );
   }
 
+  // exercise type selector drop down choice box
   Widget _buildExerciseTypeSelector() {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
@@ -157,6 +166,7 @@ class _AnalyzeVideoPageState extends State<AnalyzeVideoPage> {
     );
   }
 
+  // video player 
   Widget _buildVideoPlayer() {
     return Container(
       height: 240,
@@ -182,6 +192,7 @@ class _AnalyzeVideoPageState extends State<AnalyzeVideoPage> {
     );
   }
 
+  // buttons for choosing removing video
   Widget _buildButtonsRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -199,6 +210,7 @@ class _AnalyzeVideoPageState extends State<AnalyzeVideoPage> {
     );
   }
 
+  // counting mistakes
   Widget _buildFeedbackInfo() {
     return Text(
       'Mistakes: ${_feedbackList.length}',
@@ -210,6 +222,7 @@ class _AnalyzeVideoPageState extends State<AnalyzeVideoPage> {
     );
   }
 
+  // feedback list widget
   Widget buildListBuilder({required List<PoseFeedbackData> feedbackList}) {
     return SizedBox(
       height: 290,
