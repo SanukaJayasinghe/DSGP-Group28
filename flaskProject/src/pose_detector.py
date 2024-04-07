@@ -29,7 +29,7 @@ class PoseDetector:
     }
 
     def __init__(self):
-        print('Class initialized')
+        print('Pose Detector Class initialized')
 
     def load_model(self, path):
         path = os.path.join('model', self.model_path[path])
@@ -117,79 +117,167 @@ class PoseDetector:
                 df = pd.DataFrame(data_dict)
                 angles_df = pd.DataFrame()
 
-                Angle_At_Right_Elbow = df[[
-                    'RIGHT_WRIST_Point_x', 'RIGHT_WRIST_Point_y',
-                    'RIGHT_ELBOW_Point_x', 'RIGHT_ELBOW_Point_y',
-                    'RIGHT_SHOULDER_Point_x', 'RIGHT_SHOULDER_Point_y'
-                ]]
+                # Angles
+                # SHOULDER
 
-                angles_df['Angle_At_Right_Elbow'] = Angle_At_Right_Elbow.apply(
-                    self.calculate_angle, axis=1)
-
-                Angle_At_Left_Elbow = df[[
-                    'LEFT_WRIST_Point_x', 'LEFT_WRIST_Point_y',
-                    'LEFT_ELBOW_Point_x', 'LEFT_ELBOW_Point_y',
-                    'LEFT_SHOULDER_Point_x', 'LEFT_SHOULDER_Point_y'
-                ]]
-                angles_df['Angle_At_Left_Elbow'] = Angle_At_Left_Elbow.apply(
-                    self.calculate_angle, axis=1)
-
-                Angle_At_Right_Shoulder = df[[
-                    'RIGHT_ELBOW_Point_x', 'RIGHT_ELBOW_Point_y',
-                    'RIGHT_SHOULDER_Point_x', 'RIGHT_SHOULDER_Point_y',
-                    'RIGHT_HIP_Point_x', 'RIGHT_HIP_Point_y'
-                ]]
-                angles_df['Angle_At_Right_Shoulder'] = Angle_At_Right_Shoulder.apply(
-                    self.calculate_angle, axis=1)
-
-                Angle_At_Left_Shoulder = df[[
+                # LEFT_SHOULDER
+                left_shoulder = df[[
                     'LEFT_ELBOW_Point_x', 'LEFT_ELBOW_Point_y',
                     'LEFT_SHOULDER_Point_x', 'LEFT_SHOULDER_Point_y',
                     'LEFT_HIP_Point_x', 'LEFT_HIP_Point_y'
                 ]]
-                angles_df['Angle_At_Left_Shoulder'] = Angle_At_Left_Shoulder.apply(
+                angles_df['Left_Shoulder_Angle'] = left_shoulder.apply(
                     self.calculate_angle, axis=1)
 
-                Angle_At_Right_Knee = df[[
-                    'RIGHT_HIP_Point_x', 'RIGHT_HIP_Point_y',
-                    'RIGHT_KNEE_Point_x', 'RIGHT_KNEE_Point_y',
-                    'RIGHT_ANKLE_Point_x', 'RIGHT_ANKLE_Point_y'
-                ]]
-                angles_df['Angle_At_Right_Knee'] = Angle_At_Right_Knee.apply(
-                    self.calculate_angle, axis=1)
-
-                Angle_At_Left_Knee = df[[
-                    'LEFT_HIP_Point_x', 'LEFT_HIP_Point_y',
-                    'LEFT_KNEE_Point_x', 'LEFT_KNEE_Point_y',
-                    'LEFT_ANKLE_Point_x', 'LEFT_ANKLE_Point_y'
-                ]]
-                angles_df['Angle_At_Left_Knee'] = Angle_At_Left_Knee.apply(
-                    self.calculate_angle, axis=1)
-
-                Angle_At_Right_Hip = df[[
+                # RIGHT_SHOULDER
+                right_shoulder = df[[
+                    'RIGHT_ELBOW_Point_x', 'RIGHT_ELBOW_Point_y',
                     'RIGHT_SHOULDER_Point_x', 'RIGHT_SHOULDER_Point_y',
-                    'RIGHT_HIP_Point_x', 'RIGHT_HIP_Point_y',
-                    'RIGHT_KNEE_Point_x', 'RIGHT_KNEE_Point_y'
+                    'RIGHT_HIP_Point_x', 'RIGHT_HIP_Point_y'
                 ]]
-                angles_df['Angle_At_Right_Hip'] = Angle_At_Right_Hip.apply(
+                angles_df['Right_Shoulder_Angle'] = right_shoulder.apply(
                     self.calculate_angle, axis=1)
 
-                Angle_At_Left_Hip = df[[
+                # ELBOW
+
+                # LEFT_ELBOW
+                left_elbow = df[[
+                    'LEFT_WRIST_Point_x', 'LEFT_WRIST_Point_y',
+                    'LEFT_ELBOW_Point_x', 'LEFT_ELBOW_Point_y',
+                    'LEFT_SHOULDER_Point_x', 'LEFT_SHOULDER_Point_y'
+                ]]
+                angles_df['Left_Elbow_Angle'] = left_elbow.apply(self.calculate_angle, axis=1)
+
+                # RIGHT_ELBOW
+                right_elbow = df[[
+                    'RIGHT_WRIST_Point_x', 'RIGHT_WRIST_Point_y',
+                    'RIGHT_ELBOW_Point_x', 'RIGHT_ELBOW_Point_y',
+                    'RIGHT_SHOULDER_Point_x', 'RIGHT_SHOULDER_Point_y'
+                ]]
+                angles_df['Right_Elbow_Angle'] = right_elbow.apply(self.calculate_angle, axis=1)
+
+                # WRIST
+
+                # LEFT_WRIST
+                left_wrist = df[[
+                    'LEFT_ELBOW_Point_x', 'LEFT_ELBOW_Point_y',
+                    'LEFT_WRIST_Point_x', 'LEFT_WRIST_Point_y',
+                    'LEFT_SHOULDER_Point_x', 'LEFT_SHOULDER_Point_y'
+                ]]
+                angles_df['Left_Wrist_Angle'] = left_wrist.apply(self.calculate_angle, axis=1)
+
+                # RIGHT_WRIST
+                right_wrist = df[[
+                    'RIGHT_ELBOW_Point_x', 'RIGHT_ELBOW_Point_y',
+                    'RIGHT_WRIST_Point_x', 'RIGHT_WRIST_Point_y',
+                    'RIGHT_SHOULDER_Point_x', 'RIGHT_SHOULDER_Point_y'
+                ]]
+                angles_df['Right_Wrist_Angle'] = right_wrist.apply(self.calculate_angle, axis=1)
+
+                # HIP
+
+                # LEFT_HIP
+                left_hip = df[[
                     'LEFT_SHOULDER_Point_x', 'LEFT_SHOULDER_Point_y',
                     'LEFT_HIP_Point_x', 'LEFT_HIP_Point_y',
                     'LEFT_KNEE_Point_x', 'LEFT_KNEE_Point_y'
                 ]]
-                angles_df['Angle_At_Left_Hip'] = Angle_At_Left_Hip.apply(
-                    self.calculate_angle, axis=1)
+                angles_df['Left_Hip_Angle'] = left_hip.apply(self.calculate_angle, axis=1)
 
-                Angle_At_Neck = df[[
+                # RIGHT_HIP
+                right_hip = df[[
+                    'RIGHT_SHOULDER_Point_x', 'RIGHT_SHOULDER_Point_y',
+                    'RIGHT_HIP_Point_x', 'RIGHT_HIP_Point_y',
+                    'RIGHT_KNEE_Point_x', 'RIGHT_KNEE_Point_y'
+                ]]
+                angles_df['Right_Hip_Angle'] = right_hip.apply(self.calculate_angle, axis=1)
+
+                # KNEE
+
+                # LEFT_KNEE
+                left_knee = df[[
+                    'LEFT_HIP_Point_x', 'LEFT_HIP_Point_y',
+                    'LEFT_KNEE_Point_x', 'LEFT_KNEE_Point_y',
+                    'LEFT_ANKLE_Point_x', 'LEFT_ANKLE_Point_y'
+                ]]
+                angles_df['Left_Knee_Angle'] = left_knee.apply(self.calculate_angle, axis=1)
+
+                # RIGHT_KNEE
+
+                Right_Knee = df[[
+                    'RIGHT_HIP_Point_x', 'RIGHT_HIP_Point_y',
+                    'RIGHT_KNEE_Point_x', 'RIGHT_KNEE_Point_y',
+                    'RIGHT_ANKLE_Point_x', 'RIGHT_ANKLE_Point_y'
+                ]]
+                angles_df['Right_Knee_Angle'] = Right_Knee.apply(self.calculate_angle, axis=1)
+
+                # NECK
+                Neck = df[[
                     'LEFT_SHOULDER_Point_x', 'LEFT_SHOULDER_Point_y',
                     'NOSE_Point_x', 'NOSE_Point_y',
                     'RIGHT_SHOULDER_Point_x', 'RIGHT_SHOULDER_Point_y'
                 ]]
-                angles_df['Angle_At_Neck'] = Angle_At_Neck.apply(
+                angles_df['Neck_Angle'] = Neck.apply(self.calculate_angle, axis=1)
+
+                # ANKLE
+
+                # LEFT_ANKLE
+                Left_Ankle = df[[
+                    'LEFT_KNEE_Point_x', 'LEFT_KNEE_Point_y',
+                    'LEFT_ANKLE_Point_x', 'LEFT_ANKLE_Point_y',
+                    'LEFT_HEEL_Point_x', 'LEFT_HEEL_Point_y'
+                ]]
+                angles_df['Left_Ankle_Angle'] = Left_Ankle.apply(self.calculate_angle, axis=1)
+
+                # RIGHT_ANKLE
+
+                Right_Ankle = df[[
+                    'RIGHT_KNEE_Point_x', 'RIGHT_KNEE_Point_y',
+                    'RIGHT_ANKLE_Point_x', 'RIGHT_ANKLE_Point_y',
+                    'RIGHT_HEEL_Point_x', 'RIGHT_HEEL_Point_y'
+                ]]
+                angles_df['Right_Ankle_Angle'] = Right_Ankle.apply(self.calculate_angle, axis=1)
+
+                # HEEL
+
+                # LEFT_HEEL
+
+                Left_Heel = df[[
+                    'LEFT_ANKLE_Point_x', 'LEFT_ANKLE_Point_y',
+                    'LEFT_HEEL_Point_x', 'LEFT_HEEL_Point_y',
+                    'LEFT_FOOT_INDEX_Point_x', 'LEFT_FOOT_INDEX_Point_y'
+                ]]
+                angles_df['Left_Heel_Angle'] = Left_Heel.apply(self.calculate_angle, axis=1)
+
+                # RIGHT_HEEL
+
+                Right_Heel = df[[
+                    'RIGHT_ANKLE_Point_x', 'RIGHT_ANKLE_Point_y',
+                    'RIGHT_HEEL_Point_x', 'RIGHT_HEEL_Point_y',
+                    'RIGHT_FOOT_INDEX_Point_x', 'RIGHT_FOOT_INDEX_Point_y'
+                ]]
+                angles_df['Right_Heel_Angle'] = Right_Heel.apply(self.calculate_angle, axis=1)
+
+                # FOOT_INDEX
+
+                # LEFT_FOOT_INDEX
+
+                Left_Foot_Index = df[[
+                    'LEFT_ANKLE_Point_x', 'LEFT_ANKLE_Point_y',
+                    'LEFT_FOOT_INDEX_Point_x', 'LEFT_FOOT_INDEX_Point_y',
+                    'LEFT_HEEL_Point_x', 'LEFT_HEEL_Point_y'
+                ]]
+                angles_df['Left_Foot_Index_Angle'] = Left_Foot_Index.apply(
                     self.calculate_angle, axis=1)
 
+                # RIGHT_FOOT_INDEX
+                Right_Foot_Index = df[[
+                    'RIGHT_ANKLE_Point_x', 'RIGHT_ANKLE_Point_y',
+                    'RIGHT_FOOT_INDEX_Point_x', 'RIGHT_FOOT_INDEX_Point_y',
+                    'RIGHT_HEEL_Point_x', 'RIGHT_HEEL_Point_y'
+                ]]
+                angles_df['Right_Foot_Index_Angle'] = Right_Foot_Index.apply(
+                    self.calculate_angle, axis=1)
 
                 prediction = self.model.predict(angles_df)  # type:ignore
                 image = self.draw_line_and_send(image, landmarks)

@@ -5,7 +5,6 @@ void main() {
   runApp(const MyApp());
 }
 
-/// The main application widget.
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -19,7 +18,7 @@ class MyApp extends StatelessWidget {
         highlightColor: Colors.transparent,
         fontFamily: 'Poppins',
       ),
-      home: const LoginPage(),
+      home: LoginPage(),
       debugShowCheckedModeBanner: false,
     );
   }

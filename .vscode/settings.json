@@ -3,6 +3,7 @@
     "python.analysis.extraPaths": [
         "./flaskProject",
         "./flaskProject",
+        "./flaskProject",
         "./flaskProject"
     ]
 }
