@@ -6,6 +6,7 @@ import pickle
 import base64
 import math
 import os
+from datetime import timedelta
 
 
 class PoseDetector:
@@ -55,9 +56,17 @@ class PoseDetector:
             angle += 360
         return angle
 
-    def draw_line_and_send(self, image, landmarks):
+    def draw_line_and_send(self, image, landmarks, prediction):
         self.mp_drawing.draw_landmarks(
             image, landmarks, self.mp_pose.POSE_CONNECTIONS)
+
+        if prediction == 0:
+            text = 'Wrong'
+        else:
+            text = 'Correct'
+
+        cv2.putText(image, text, (10, 30),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
         return image
 
     def resize_image(self, image):
@@ -71,9 +80,10 @@ class PoseDetector:
         return resized_img
 
     def process_video(self, video_path, callback_function):
-        frame_count = 0
         self.stream = True
         self.cap = cv2.VideoCapture(video_path)
+        frame_count = 0
+        fps = self.cap.get(cv2.CAP_PROP_FPS)
 
         while self.cap.isOpened() and self.stream:
             success, image = self.cap.read()
@@ -81,7 +91,8 @@ class PoseDetector:
                 break
 
             frame_count += 1
-            print(f'Processing frame {frame_count}')
+            timestamp = timedelta(seconds=frame_count / fps)
+            print(f'Processing frame {frame_count} - Timestamp: {timestamp}')
 
             image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
@@ -146,7 +157,8 @@ class PoseDetector:
                     'LEFT_ELBOW_Point_x', 'LEFT_ELBOW_Point_y',
                     'LEFT_SHOULDER_Point_x', 'LEFT_SHOULDER_Point_y'
                 ]]
-                angles_df['Left_Elbow_Angle'] = left_elbow.apply(self.calculate_angle, axis=1)
+                angles_df['Left_Elbow_Angle'] = left_elbow.apply(
+                    self.calculate_angle, axis=1)
 
                 # RIGHT_ELBOW
                 right_elbow = df[[
@@ -154,7 +166,8 @@ class PoseDetector:
                     'RIGHT_ELBOW_Point_x', 'RIGHT_ELBOW_Point_y',
                     'RIGHT_SHOULDER_Point_x', 'RIGHT_SHOULDER_Point_y'
                 ]]
-                angles_df['Right_Elbow_Angle'] = right_elbow.apply(self.calculate_angle, axis=1)
+                angles_df['Right_Elbow_Angle'] = right_elbow.apply(
+                    self.calculate_angle, axis=1)
 
                 # WRIST
 
@@ -164,7 +177,8 @@ class PoseDetector:
                     'LEFT_WRIST_Point_x', 'LEFT_WRIST_Point_y',
                     'LEFT_SHOULDER_Point_x', 'LEFT_SHOULDER_Point_y'
                 ]]
-                angles_df['Left_Wrist_Angle'] = left_wrist.apply(self.calculate_angle, axis=1)
+                angles_df['Left_Wrist_Angle'] = left_wrist.apply(
+                    self.calculate_angle, axis=1)
 
                 # RIGHT_WRIST
                 right_wrist = df[[
@@ -172,7 +186,8 @@ class PoseDetector:
                     'RIGHT_WRIST_Point_x', 'RIGHT_WRIST_Point_y',
                     'RIGHT_SHOULDER_Point_x', 'RIGHT_SHOULDER_Point_y'
                 ]]
-                angles_df['Right_Wrist_Angle'] = right_wrist.apply(self.calculate_angle, axis=1)
+                angles_df['Right_Wrist_Angle'] = right_wrist.apply(
+                    self.calculate_angle, axis=1)
 
                 # HIP
 
@@ -182,7 +197,8 @@ class PoseDetector:
                     'LEFT_HIP_Point_x', 'LEFT_HIP_Point_y',
                     'LEFT_KNEE_Point_x', 'LEFT_KNEE_Point_y'
                 ]]
-                angles_df['Left_Hip_Angle'] = left_hip.apply(self.calculate_angle, axis=1)
+                angles_df['Left_Hip_Angle'] = left_hip.apply(
+                    self.calculate_angle, axis=1)
 
                 # RIGHT_HIP
                 right_hip = df[[
@@ -190,7 +206,8 @@ class PoseDetector:
                     'RIGHT_HIP_Point_x', 'RIGHT_HIP_Point_y',
                     'RIGHT_KNEE_Point_x', 'RIGHT_KNEE_Point_y'
                 ]]
-                angles_df['Right_Hip_Angle'] = right_hip.apply(self.calculate_angle, axis=1)
+                angles_df['Right_Hip_Angle'] = right_hip.apply(
+                    self.calculate_angle, axis=1)
 
                 # KNEE
 
@@ -200,7 +217,8 @@ class PoseDetector:
                     'LEFT_KNEE_Point_x', 'LEFT_KNEE_Point_y',
                     'LEFT_ANKLE_Point_x', 'LEFT_ANKLE_Point_y'
                 ]]
-                angles_df['Left_Knee_Angle'] = left_knee.apply(self.calculate_angle, axis=1)
+                angles_df['Left_Knee_Angle'] = left_knee.apply(
+                    self.calculate_angle, axis=1)
 
                 # RIGHT_KNEE
 
@@ -209,7 +227,8 @@ class PoseDetector:
                     'RIGHT_KNEE_Point_x', 'RIGHT_KNEE_Point_y',
                     'RIGHT_ANKLE_Point_x', 'RIGHT_ANKLE_Point_y'
                 ]]
-                angles_df['Right_Knee_Angle'] = Right_Knee.apply(self.calculate_angle, axis=1)
+                angles_df['Right_Knee_Angle'] = Right_Knee.apply(
+                    self.calculate_angle, axis=1)
 
                 # NECK
                 Neck = df[[
@@ -217,7 +236,8 @@ class PoseDetector:
                     'NOSE_Point_x', 'NOSE_Point_y',
                     'RIGHT_SHOULDER_Point_x', 'RIGHT_SHOULDER_Point_y'
                 ]]
-                angles_df['Neck_Angle'] = Neck.apply(self.calculate_angle, axis=1)
+                angles_df['Neck_Angle'] = Neck.apply(
+                    self.calculate_angle, axis=1)
 
                 # ANKLE
 
@@ -227,7 +247,8 @@ class PoseDetector:
                     'LEFT_ANKLE_Point_x', 'LEFT_ANKLE_Point_y',
                     'LEFT_HEEL_Point_x', 'LEFT_HEEL_Point_y'
                 ]]
-                angles_df['Left_Ankle_Angle'] = Left_Ankle.apply(self.calculate_angle, axis=1)
+                angles_df['Left_Ankle_Angle'] = Left_Ankle.apply(
+                    self.calculate_angle, axis=1)
 
                 # RIGHT_ANKLE
 
@@ -236,7 +257,8 @@ class PoseDetector:
                     'RIGHT_ANKLE_Point_x', 'RIGHT_ANKLE_Point_y',
                     'RIGHT_HEEL_Point_x', 'RIGHT_HEEL_Point_y'
                 ]]
-                angles_df['Right_Ankle_Angle'] = Right_Ankle.apply(self.calculate_angle, axis=1)
+                angles_df['Right_Ankle_Angle'] = Right_Ankle.apply(
+                    self.calculate_angle, axis=1)
 
                 # HEEL
 
@@ -247,7 +269,8 @@ class PoseDetector:
                     'LEFT_HEEL_Point_x', 'LEFT_HEEL_Point_y',
                     'LEFT_FOOT_INDEX_Point_x', 'LEFT_FOOT_INDEX_Point_y'
                 ]]
-                angles_df['Left_Heel_Angle'] = Left_Heel.apply(self.calculate_angle, axis=1)
+                angles_df['Left_Heel_Angle'] = Left_Heel.apply(
+                    self.calculate_angle, axis=1)
 
                 # RIGHT_HEEL
 
@@ -256,7 +279,8 @@ class PoseDetector:
                     'RIGHT_HEEL_Point_x', 'RIGHT_HEEL_Point_y',
                     'RIGHT_FOOT_INDEX_Point_x', 'RIGHT_FOOT_INDEX_Point_y'
                 ]]
-                angles_df['Right_Heel_Angle'] = Right_Heel.apply(self.calculate_angle, axis=1)
+                angles_df['Right_Heel_Angle'] = Right_Heel.apply(
+                    self.calculate_angle, axis=1)
 
                 # FOOT_INDEX
 
@@ -280,17 +304,18 @@ class PoseDetector:
                     self.calculate_angle, axis=1)
 
                 prediction = self.model.predict(angles_df)  # type:ignore
-                image = self.draw_line_and_send(image, landmarks)
+                image = self.draw_line_and_send(image, landmarks, prediction)
                 resized_image = self.resize_image(image)
                 image_bytes = cv2.imencode('.jpeg', resized_image)[1].tobytes()
                 image64bit = base64.b64encode(image_bytes).decode()
+                header = f"Frame {frame_count} - Timestamp: {timestamp}"
 
                 if prediction == 0 or prediction is False:
                     callback_function(
-                        {'type': 'wrong', 'image': image64bit, 'header': 'Sample header', 'description': 'Sample description'})
+                        {'type': 'wrong', 'image': image64bit, 'header': header, 'description': 'Sample description'})
                 else:
                     callback_function(
-                        {'type': 'stream', 'image': image64bit, 'header': 'Sample header', 'description': 'Sample description'})
+                        {'type': 'stream', 'image': image64bit, 'header': header, 'description': 'Sample description'})
                     pass
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
